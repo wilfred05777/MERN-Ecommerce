@@ -3,7 +3,11 @@ const { validationResult } = require("express-validator");
 // const { JWT_SECRET } = require("../../config/envConfig");
 const UserModel = require("../../models/User");
 
-const { hashedPassword, createToken } = require("../../services/authServices");
+const {
+  hashedPassword,
+  createToken,
+  comparedPassword,
+} = require("../../services/authServices");
 
 // @route POST /api/register
 // @access Public
@@ -44,5 +48,44 @@ module.exports.register = async (req, res) => {
     // console.log(req.body);
     // validations failed
     return res.status(400).json({ errors: errors.array() });
+  }
+};
+
+// @route POST /api/login
+// @access Public
+// @desc Login user and return a token
+module.exports.login = async (req, res) => {
+  const { email, password } = req.body;
+  const error = validationResult(req);
+
+  if (error.isEmpty()) {
+    try {
+      const user = await UserModel.findOne({ email });
+
+      if (user) {
+        if (await comparedPassword(password, user.password)) {
+          const token = createToken({ id: user._id, name: user.name });
+          if (user.admin) {
+            return res.status(201).json({ token, admin: true });
+          } else {
+            return res.status(201).json({ token, admin: false });
+          }
+        } else {
+          return res
+            .status(401)
+            .json({ errors: [{ msg: "password not matched" }] });
+        }
+      } else {
+        return res
+          .status(401)
+          .json({ errors: [{ msg: `${email} is not foud` }] });
+      }
+    } catch (error) {
+      console.log(error.message);
+      return res.status(500).json("Sever internal error");
+    }
+  } else {
+    // validation failed
+    return res.status(401).json({ errors: error.array() });
   }
 };
