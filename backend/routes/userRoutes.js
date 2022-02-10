@@ -6,6 +6,8 @@ const { register } = require("./../controllers/users/usersController");
 
 router.post("/register", registerValidations, register);
 
+module.exports = router;
+
 // const registerValidations = [
 //     body("name").not().isEmpty().escape().trim().withMessage("name is required"),
 //     body("email").isEmail().trim().withMessage("email is required"),
@@ -25,5 +27,4 @@ router.post("/register", registerValidations, register);
 //   }
 // });
 
-module.exports = router;
 // https://www.youtube.com/watch?v=6F1--EkwHRI&list=PLZdXBpi-l7C7bM_rwTOcWaZv8FInVQYMz&index=4
