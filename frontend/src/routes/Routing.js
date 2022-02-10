@@ -8,7 +8,6 @@ const Routing = () => {
         <Route path="auth">
           <Route path="admin-login" element={<AdminLogin />} />
         </Route>
-        {/* <Route path="admin-login" element={<AdminLogin />} /> */}
       </Routes>
     </BrowserRouter>
   );
