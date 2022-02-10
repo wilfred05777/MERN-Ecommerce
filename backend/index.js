@@ -2,13 +2,19 @@ const express = require("express");
 const env = require("./config/envConfig");
 const app = express();
 const connect = require("./config/db");
-
+const userRoutes = require("./routes/userRoutes");
 // database connection
 connect();
+
+// add middleware
+app.use(express.json());
 
 app.get("/", (req, res) => {
   res.json({ msg: "Welcome to express" });
 });
+
+// user routes
+app.use(userRoutes);
 
 const port = env.PORT || 5000;
 
