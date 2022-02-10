@@ -1,8 +1,9 @@
 const { validationResult } = require("express-validator");
-const jwt = require("jsonwebtoken");
-
+// const jwt = require("jsonwebtoken");
+// const { JWT_SECRET } = require("../../config/envConfig");
 const UserModel = require("../../models/User");
-const { hashedPassword } = require("../../services/authServices");
+
+const { hashedPassword, createToken } = require("../../services/authServices");
 
 // @route POST /api/register
 // @access Public
@@ -20,10 +21,15 @@ module.exports.register = async (req, res) => {
           name,
           email,
           password: hashed,
-          admin: true,
+          //   admin: true,
         });
-        const token = jwt.sign();
-        return res.status(201).json({ msg: "Your Account has been created!" });
+        const token = createToken({ id: user._id, name: user.name });
+        // const token = jwt.sign({ id: user._id, name: user.name }, JWT_SECRET, {
+        //   expiresIn: "7d",
+        // });
+        return res
+          .status(201)
+          .json({ msg: "Your Account has been created!", token });
       } else {
         /// email already taken
         return res
